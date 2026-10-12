@@ -1,0 +1,23 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <Description>class</Description>
+    <ColorInterp>Palette</ColorInterp>
+    <CategoryNames>
+      <Category></Category>
+      <Category>bare ground</Category>
+      <Category>vegetation</Category>
+      <Category>water</Category>
+      <Category>built-up</Category>
+    </CategoryNames>
+    <ColorTable>
+      <Entry c1="0" c2="0" c3="0" c4="0" />
+      <Entry c1="201" c2="166" c3="107" c4="255" />
+      <Entry c1="46" c2="139" c3="61" c4="255" />
+      <Entry c1="42" c2="120" c3="214" c4="255" />
+      <Entry c1="140" c2="140" c3="148" c4="255" />
+    </ColorTable>
+  </PAMRasterBand>
+  <PAMRasterBand band="2">
+    <Description>probability x255</Description>
+  </PAMRasterBand>
+</PAMDataset>

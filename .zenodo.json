@@ -1,0 +1,31 @@
+{
+  "title": "RasterLabel",
+  "upload_type": "software",
+  "version": "1.1",
+  "description": "<p>RasterLabel is a QGIS plugin, one code base for QGIS 3.36 to 4.x (Qt 5 and Qt 6), for annotating rasters with areas, lines and points under a legend of the user's own. The work is saved as real geometry in a GeoPackage beside a manifest that records the pixel grid, so that a mask burned from it lines up with the image pixel for pixel. Readings, an operator in a pass, are first class: a second, blind reading of the same frames is how the agreement between two readers is measured, with confusion matrices, kappa as an agreement statistic, quantity and allocation disagreement and frame-bootstrap intervals. A thematic map made by any tool can be corrected on a working copy, with a record of every change, and compared with the model's map afterwards; the probability a model left can send the person first to where it was unsure. Frames can be imported with the sampling design they were drawn under. Training masks, tiles and STAC catalogues are exported with an ignore value, and a dataset card describes what was written. Examples and a tutorial on synthetic data are included.</p>",
+  "creators": [
+    {
+      "name": "Guastella, Massimiliano",
+      "affiliation": "Department of Civil, Building and Environmental Engineering (DICEA), Sapienza University of Rome, Rome, Italy; Department of Earth and Marine Sciences (DiSTeM), University of Palermo, Palermo, Italy",
+      "orcid": "0009-0006-9841-6275"
+    }
+  ],
+  "license": "gpl-2.0-or-later",
+  "access_right": "open",
+  "keywords": [
+    "QGIS",
+    "raster annotation",
+    "training data",
+    "semantic segmentation",
+    "inter-annotator agreement",
+    "map correction",
+    "remote sensing"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/massigit12345/Rasterlabel",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

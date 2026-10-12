@@ -1,0 +1,17 @@
+# Line endings: LF in the repository and LF in every checkout, whatever the
+# machine's core.autocrlf says. On Windows, autocrlf turned every text file
+# into CRLF on checkout, so a zip built there carried CRLF files, and the build
+# stamp, a hash over the bytes of the .py files, came out different from the
+# one built on the server from the same commit. With this the release zip is
+# the same byte for byte wherever it is built.
+* text=auto eol=lf
+
+# Never touched, whatever their content looks like.
+*.png binary
+*.jpg binary
+*.ico binary
+*.zip binary
+*.tif binary
+*.tiff binary
+*.gpkg binary
+*.qgz binary

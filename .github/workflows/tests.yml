@@ -1,0 +1,127 @@
+name: tests
+
+# Most suites fake the parts of QGIS they need, so the first job installs no
+# QGIS; that is the whole reason they can run here at all. The second runs
+# the same suites inside the QGIS 4 image, for its Qt 6, its GDAL and the
+# suites that hand values to the real QGIS classes (NEEDS_QGIS in
+# tests/run.py).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# The jobs only read the repository: the token they are given can do no more,
+# whatever the settings of the repository or the organisation say. The actions
+# below are named by the commit of the release they were checked at, because a
+# tag can be moved and a commit cannot; the release is in the comment.
+permissions:
+  contents: read
+
+jobs:
+  suites:
+    # A named release, not ubuntu-latest: the packages below are the ones that
+    # were tried on 24.04, and the day latest moves on, a package renamed or
+    # dropped should be a change made here on purpose, not a red run nobody
+    # asked for.
+    runs-on: ubuntu-24.04
+    # Far longer than a run takes, short enough that a hung suite does not
+    # hold the runner for the six hours GitHub allows by default.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Everything from apt, for the one system python3, and no setup-python.
+      # The GDAL bindings must match the GDAL on the machine, so they can only
+      # come from python3-gdal, and python3-gdal is built for /usr/bin/python3.
+      # With setup-python in front, python3 was a second interpreter that could
+      # not see them, the runner skipped the GDAL suites, and the run was
+      # green without having read or written a single real raster. PyQt5,
+      # numpy, shapely and pyflakes come from apt for the same interpreter.
+      # glib, fontconfig and a font are on the runner image already; they are
+      # named so the job does not lean on what the image happens to carry.
+      - name: Python, GDAL, PyQt5, and the X libraries Qt wants even offscreen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            python3 gdal-bin python3-gdal \
+            python3-pyqt5 python3-numpy python3-shapely python3-pyflakes \
+            libglib2.0-0t64 fontconfig fonts-dejavu-core \
+            libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 \
+            libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 \
+            libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xfixes0
+
+      - name: The single file in dist is the package, not an older copy
+        run: python3 tools/bundle.py --check
+
+      # The zip before the suites, not after. The zip is not in the repository
+      # (dist/*.zip is ignored), one suite installs it the way QGIS does, and
+      # the suites run with --no-build, so with the zip made last that suite
+      # found nothing to open and the run went red on a fresh clone for a
+      # reason that had nothing to do with the program. Found by running these
+      # steps on a clone before the first push.
+      - name: The zip QGIS would install
+        run: python3 tools/package_plugin.py
+
+      # RL_REQUIRE_GDAL turns a skipped GDAL suite into a failed one, so the
+      # gap above cannot come back quietly.
+      - name: Every suite
+        env:
+          QT_QPA_PLATFORM: offscreen
+          RL_REQUIRE_GDAL: '1'
+          RL_REQUIRE_PYFLAKES: '1'
+        run: python3 tests/run.py --no-build
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: rasterlabel-plugin
+          path: dist/*.zip
+
+  qgis4:
+    # The same suites again, inside the official QGIS 4 image: Qt 6, PyQt6 and
+    # the GDAL that QGIS 4 itself is built with, where the job above is Qt 5.
+    # A named release again, for the same reason as above, and the Debian
+    # build of it: the plain 4.2.3 tag is Ubuntu 25.10, which is past its end
+    # of life, and the day its packages leave the archive apt-get update fails
+    # here with no change to the code. Debian 13 is supported for years. The
+    # image has Python, PyQt6, numpy and GDAL; shapely, pyflakes and git come
+    # from apt, git first, so the checkout is a real clone that
+    # package_plugin can read.
+    runs-on: ubuntu-24.04
+    container: qgis/qgis:4.2.3-trixie
+    timeout-minutes: 45
+    steps:
+      - name: shapely, pyflakes and git, for the image's own python3
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            python3-shapely python3-pyflakes git
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The checkout belongs to another user than the container's root, and
+      # git refuses to read a repository it does not own without this. The
+      # second line is for cloning it: the clone reads the repository through
+      # its .git folder, which git checks under that name.
+      - name: Let git read the checkout
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE/.git"
+
+      - name: The single file in dist is the package, not an older copy
+        run: python3 tools/bundle.py --check
+
+      - name: The zip QGIS would install
+        run: python3 tools/package_plugin.py
+
+      # RL_REQUIRE_QGIS fails, instead of skipping, the suites that need QGIS
+      # itself. Here QGIS is right there, so a skip would be a gap.
+      - name: Every suite, on PyQt6
+        env:
+          QT_QPA_PLATFORM: offscreen
+          RL_REQUIRE_GDAL: '1'
+          RL_REQUIRE_QGIS: '1'
+          RL_REQUIRE_PYFLAKES: '1'
+          RL_QT: '6'
+        run: python3 tests/run.py --no-build

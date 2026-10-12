@@ -1,0 +1,132 @@
+[general]
+name=RasterLabel
+qgisMinimumVersion=3.36
+qgisMaximumVersion=4.99
+supportsQt6=True
+description=Draw labels on a raster: areas, lines and points, with your own legend, saved as real geometry and exportable as training masks.
+version=1.1
+author=Massimiliano Guastella
+email=massimiliano.guastella@uniroma1.it
+
+about=A panel that turns QGIS into a general raster annotator. You keep your own
+    legend, draw areas, lines, points and boxes over any raster QGIS can open,
+    georeferenced or not, and the result is saved as real geometry in a
+    GeoPackage beside a manifest that records the pixel grid. Frames, the
+    strip a line claims and the footprint of a point are placed on the pixels
+    of the reference raster; a brush outline is vector, and the areas are
+    burned onto that grid by pixel centre, so a mask exported at full size
+    lines up with the image pixel for pixel. A new mark is clipped to its
+    frame and, by default, fills only the ground no other class holds yet;
+    either way two labels of one reading never share ground. Readings are first class: each
+    operator in each pass is kept apart, a blind second pass can be drawn over
+    the same ground, and a mask can be one reading or their consensus. Correct
+    mends a thematic map made by any program, on a copy with the bands of the
+    original. Cutouts writes a dataset out, resampling a layer that is off the
+    grid by what it holds, with a STAC catalogue if asked, and the boxes of
+    Objects as COCO and YOLO labels. The Measure menu
+    writes reports for a paper: agreement between two readings, the time the
+    drawing took, a model against its corrected map, where its uncertainty
+    pointed, and a dataset card, each also an algorithm of the Processing
+    toolbox for models and scripts. Written for annotating mud volcano
+    orthomosaics at five centimetres a pixel, and it works on a photograph
+    with no coordinate system just as well. A synthetic example and a
+    tutorial are in the repository.
+
+tracker=https://github.com/massigit12345/Rasterlabel/issues
+repository=https://github.com/massigit12345/Rasterlabel
+homepage=https://github.com/massigit12345/Rasterlabel
+
+category=Raster
+icon=icon.svg
+experimental=False
+deprecated=False
+server=False
+hasProcessingProvider=yes
+
+# qgisMaximumVersion=4.99 is what offers this to QGIS 4, and it is written out
+# rather than left to the default so that nobody has to know the default (it
+# would be 3.99, the last of the major version the minimum names). QGIS 4 and
+# plugins.qgis.org decide QGIS 4 compatibility from this number alone: a plugin
+# is offered to QGIS 4 when qgisMaximumVersion is 4.0 or above.
+# The same code runs on both. QGIS 3 is built on Qt5 and QGIS 4 on Qt6, and
+# the difference that matters to a plugin is that PyQt6 knows an enumeration
+# member only by its full name: Qt.DockWidgetArea.LeftDockWidgetArea, never
+# Qt.LeftDockWidgetArea. Every Qt enumeration here is written in that full
+# form, which PyQt5 understands just as well, so nothing branches on the Qt
+# version. Everything Qt is imported through qgis.PyQt, and dialogs are opened
+# with exec(), not the exec_() that PyQt6 dropped. The suites check all three
+# on every run, and run on Qt5 and Qt6 both; the plugin has been run under
+# QGIS 3.36, 3.44 and 4.2.
+# What lets QGIS 4 in is qgisMaximumVersion=4.99, above. The plugins site says
+# the supportsQt6 flag has been removed from QGIS core and is no longer
+# recognised, so it has no effect there and nothing here relies on it. The line
+# is kept as a harmless statement that the code runs on Qt6 (it does), for any
+# QGIS 3 build that might still read it; it is not needed, and it can be
+# deleted without changing what the plugin does on QGIS 4. An upload may show
+# a notice about it; that is expected, and it does not stop the upload.
+#
+# qgisMinimumVersion is 3.36 because that is what this was written against and
+# what the suites are run against. The program itself reaches further down: the
+# enumerations QGIS has renamed since 3.30 are looked up under both spellings,
+# and an older QGIS gets a window saying so rather than a traceback. That lower
+# reach is available through the single file pasted into the Python Console,
+# which has no floor; the floor here is the version somebody is told the plugin
+# was tested on.
+
+tags=raster,annotation,labelling,labeling,training data,machine learning,deep learning,mask,segmentation,digitizing,dataset,STAC,ground truth
+
+changelog=1.1
+    Measure, in both blocks: Compare two readings (confusion matrix, IoU, F1,
+    kappa beside quantity and allocation, a frame bootstrap interval, maps of
+    disagreement and of pairs, and the Processing algorithm
+    rasterlabel:agreement); Time, from a journal of what was done; Model vs
+    corrected, with the ground the strokes swept; an Uncertainty report from
+    the card that walks the places a model was unsure of; and a Dataset card,
+    also written beside Export and Whole raster; each of them is an algorithm
+    of the Processing toolbox too, for models, batches and scripts. An ignore
+    value where nobody painted, in the Whole raster and in Cutouts. Import
+    frames keeps the sampling design and refuses frames that overlap. The
+    panel in three blocks, ANNOTATION CAMPAIGN, CORRECTION and CUTOUTS, drawn
+    by the QGIS style, holding at 260 pixels with the fonts of Linux; the
+    panel holds who is drawing, so a second reader stays the second reader;
+    passes are a list for each operator, and blind shows only the pass being
+    drawn. Export writes everything in one or one set per operator, can pack
+    it all in one .zip, and asks once before writing work hidden from the
+    reader. The report windows are tidy, and Correct's FROM chips all alike.
+    Whole raster and Export write one reading or a consensus. Correct and
+    Cutouts work without an annotation campaign; the corrected map is a
+    thematic map that opens in its classes, read from the style, an attribute
+    table or the values; Correct asks before it reuses anything on disk and
+    closes its files after every stroke, opens maps of hundreds of millions of
+    pixels in the memory of a small one, measures areas on the ground row by
+    row on a map in degrees, counts net of Undo and files each stroke under
+    whoever struck; the uncertainty of such a map is read in strips as well.
+    Pictures, rotated, north-down and odd grids, other systems and lossy maps
+    are handled or refused with the reason; a negative nodata and a web
+    basemap no longer stop Cutouts. Cutouts resamples by what a layer holds
+    and reprojects, keeps the layers it was cut from in the folder
+    (layers.json), keeps the end of a long layer name in the names of its
+    files, and writes the boxes of Objects as COCO and YOLO labels, leaving
+    out the pictures over ground no frame covers, which nobody read; the mask
+    of Whole carries the legend of the campaign. A consensus counts its
+    majority among the readings that covered each frame, and a line is as
+    wide as you asked in every direction. Recovery: Put them back, Not now or
+    Discard, and nothing is deleted, and the recovery file follows frame edits;
+    Whole and Objects say when work is still unsaved; a copied or moved
+    campaign follows its folder; the files that are shared carry no home
+    folder, no name of whoever made them and no password of a web layer. A
+    report QGIS could not open is refused before it is written. No CSV cell
+    can run as a formula in a spreadsheet. Exact KML and CSV, class codes stop
+    at 254, frames never overlap and move only by their owner; a stroke over a
+    polygon keeps what it leaves of it, so a closed frame has no pixel of no
+    class. A synthetic example, a tutorial that can be followed as written and
+    the way to cite it are in the repository. QGIS 3.36 to 4.x from one
+    plugin, on Qt 5 and Qt 6.
+    1.0
+    First release. Four modules: Annotate, Correct, Objects, Cutouts. Campaigns
+    as a manifest plus a GeoPackage. Pixel exact geometry, a partition closed by
+    construction, passes and operators, exports to GeoPackage, Shapefile,
+    GeoJSON, KML and CSV, cutouts as GeoTIFF, PNG or JPEG with an optional STAC
+    catalogue. A recovery snapshot after every stroke, a log file beside the
+    campaign, and a Check button that reports the environment and the campaign's
+    integrity in one press.

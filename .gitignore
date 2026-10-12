@@ -1,0 +1,28 @@
+# Built, not written: tools/bundle.py makes it from the package. It is committed
+# all the same, because the two line console paste is how most people will meet
+# this program and a repository that cannot be pasted from is a repository that
+# needs a build step to try.
+# dist/rasterlabel.py
+
+__pycache__/
+*.py[cod]
+
+# Two suites write a helper beside themselves and exec it through a copy of the
+# harness. They are rebuilt on every run and belong to nobody.
+tests/_*.py
+*.egg-info/
+.eggs/
+build/
+dist/*.zip
+
+# what a run of the program leaves beside a campaign
+rasterlabel.log
+rasterlabel.log.1
+recovery/
+
+# editors and systems
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
