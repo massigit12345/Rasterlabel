@@ -103,6 +103,13 @@ release is listed under
 QGIS: **Plugins ▸ Manage and Install Plugins ▸ Install from ZIP**. It appears
 under **Raster ▸ RasterLabel**, and on the toolbar.
 
+**Not GitHub's green Code ▸ Download ZIP.** That archive is the whole
+repository, with the plugin one folder down (`Rasterlabel-main/rasterlabel`),
+and QGIS cannot load it: the name of the folder it finds first has a hyphen,
+which Python does not accept as the name of a module. Use
+`rasterlabel-1.1.zip` from the release page, or install RasterLabel from the
+plugin manager once it is listed there.
+
 To build the zip yourself: `python3 tools/package_plugin.py` (on Windows,
 `py -3.12 tools/package_plugin.py`), which writes
 `dist/rasterlabel-1.1.zip`. It zips the folder as it stands and says so, loudly,
@@ -2126,7 +2133,8 @@ where a failure is three days later, when the report arrives and says the progra
   corrected map at every stroke, because the libtiff of Debian and Ubuntu does
   not let another reader see a compressed block until its writer closes the
   file; the panel and its windows are laid out for the DejaVu fonts those
-  systems draw with. macOS has not been tried.
+  systems draw with. On macOS it installs and loads; it has not been tested
+  in use yet.
 - How that was checked: the suites run on PyQt5 and on PyQt6, a static check
   refuses any short Qt spelling, any import of PyQt5 or PyQt6 by name and any
   `exec_()`, and the plugin was loaded, driven through Annotate, Correct and
@@ -2160,8 +2168,9 @@ where a failure is three days later, when the report arrives and says the progra
 - QGIS and GDAL ignore the EXIF orientation of a photo, so a photo stored on
   its side is shown on its side, and the mask and the cutouts follow the
   pixels as stored. The New dialog says when a photo is stored turned.
-- macOS has not been tried. QGIS runs there and nothing in the program is
-  written for one system, but nobody has used it on a Mac yet; Qt reads Ctrl
+- macOS: the plugin installs and loads in QGIS on a Mac, but it has not been
+  tested in use there yet. Nothing in the program is written for one
+  system; Qt reads Ctrl
   as the Command key there, so every Ctrl+click in this file is Cmd+click, and
   the hints in the program say Cmd.
 - The panel is a vertical bar and cannot be docked top or bottom.

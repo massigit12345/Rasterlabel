@@ -32,8 +32,9 @@ about=A panel that turns QGIS into a general raster annotator. You keep your own
     with no coordinate system just as well. A synthetic example and a
     tutorial are in the repository.
     Requirements: QGIS 3.36 to 4.x, nothing else to install (GDAL and
-    numpy come with QGIS). Tested on Windows and Linux; macOS has not been
-    tried. A campaign or a correction must be open in one QGIS at a time.
+    numpy come with QGIS). Tested on Windows and Linux; on macOS it installs
+    and loads, but has not been tested in use yet. A campaign or a
+    correction must be open in one QGIS at a time.
 
 tracker=https://github.com/massigit12345/Rasterlabel/issues
 repository=https://github.com/massigit12345/Rasterlabel
